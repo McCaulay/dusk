@@ -275,20 +275,22 @@ class Browser
     /**
      * Take a screenshot and return the binary contents.
      *
+     * @param  bool    $full
      * @return string
      */
-    function screenshot()
+    function screenshot(bool $full = false)
     {
-        return $this->driver->takeScreenshot();
+        return $this->takeScreenshot(null, $full);
     }
 
     /**
      * Take a screenshot and store it with the given name.
      *
      * @param  string  $name
+     * @param  bool    $full
      * @return $this
      */
-    function saveScreenshot($name)
+    function saveScreenshot(string $name, bool $full = false)
     {
         $filePath = sprintf('%s/%s.png', rtrim(static::$storeScreenshotsAt, '/'), $name);
 
@@ -298,9 +300,37 @@ class Browser
             mkdir($directoryPath, 0777, true);
         }
 
-        $this->driver->takeScreenshot($filePath);
+        $this->takeScreenshot($filePath, $full);
 
         return $this;
+    }
+
+    /**
+     * Take a screenshot and return the binary contents.
+     *
+     * @param  string  $name
+     * @param  bool    $full
+     * @return string
+     */
+    function takeScreenshot(string $filePath = null, bool $full = false)
+    {
+        if ($full) {
+            // Set size to full
+            $size = $this->driver->manage()->window()->getSize();
+
+            $body = $this->driver->findElement(WebDriverBy::tagName('body'));
+            if (!empty($body) && $body->getSize()->getHeight() > 0) {
+                $this->driver->manage()->window()->setSize($body->getSize());
+            }
+        }
+        $screenshot = $this->driver->takeScreenshot($filePath);
+
+        if ($full) {
+            // Restore size
+            $this->driver->manage()->window()->setSize($size);
+        }
+
+        return $screenshot;
     }
 
     /**

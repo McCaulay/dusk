@@ -26,13 +26,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Laravel\\Duskless\\": "src/"
+            "McCaulay\\Duskless\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Laravel\\Duskless\\DusklessServiceProvider"
+                "McCaulay\\Duskless\\DusklessServiceProvider"
             ]
         }
     },
