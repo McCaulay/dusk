@@ -2,11 +2,10 @@
 
 namespace Laravel\Dusk;
 
-use Exception;
-use Laravel\Dusk\Chrome\SupportsChrome;
-use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Illuminate\Foundation\Testing\TestCase as FoundationTestCase;
+use Laravel\Dusk\Chrome\SupportsChrome;
 
 abstract class TestCase extends FoundationTestCase
 {
@@ -27,10 +26,6 @@ abstract class TestCase extends FoundationTestCase
         Browser::$storeScreenshotsAt = base_path('tests/Browser/screenshots');
 
         Browser::$storeConsoleLogAt = base_path('tests/Browser/console');
-
-        Browser::$userResolver = function () {
-            return $this->user();
-        };
     }
 
     /**
@@ -53,16 +48,5 @@ abstract class TestCase extends FoundationTestCase
     protected function baseUrl()
     {
         return config('app.url');
-    }
-
-    /**
-     * Return the default user to authenticate.
-     *
-     * @return \App\User|int|null
-     * @throws \Exception
-     */
-    protected function user()
-    {
-        throw new Exception('User resolver has not been set.');
     }
 }
