@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Dusk;
+namespace McCaulay\Duskless;
 
 use Exception;
 use Illuminate\Support\Str;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Dusk\Concerns;
+namespace McCaulay\Duskless\Concerns;
 
 use DateTimeInterface;
 

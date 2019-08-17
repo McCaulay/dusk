@@ -1,36 +1,26 @@
 <?php
 
-namespace Laravel\Dusk;
+namespace McCaulay\Duskless;
 
-use Closure;
 use BadMethodCallException;
-use Illuminate\Support\Str;
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverPoint;
-use Illuminate\Support\Traits\Macroable;
-use Facebook\WebDriver\WebDriverDimension;
+use Closure;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverDimension;
+use Facebook\WebDriver\WebDriverPoint;
+use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 
 class Browser
 {
-    use Concerns\InteractsWithAuthentication,
-        Concerns\InteractsWithCookies,
-        Concerns\InteractsWithElements,
-        Concerns\InteractsWithJavascript,
-        Concerns\InteractsWithMouse,
-        Concerns\MakesAssertions,
-        Concerns\MakesUrlAssertions,
-        Concerns\WaitsForElements,
-        Macroable {
-            __call as macroCall;
-        }
-
-    /**
-     * The base URL for all URLs.
-     *
-     * @var string
-     */
-    public static $baseUrl;
+    use Concerns\InteractsWithCookies,
+    Concerns\InteractsWithElements,
+    Concerns\InteractsWithJavascript,
+    Concerns\InteractsWithMouse,
+    Concerns\WaitsForElements,
+    Macroable {
+        __call as macroCall;
+    }
 
     /**
      * The directory that will contain any screenshots.
@@ -105,11 +95,14 @@ class Browser
      * @param  ElementResolver  $resolver
      * @return void
      */
-    public function __construct($driver, $resolver = null)
+    function __construct($driver, $resolver = null)
     {
         $this->driver = $driver;
 
         $this->resolver = $resolver ?: new ElementResolver($driver);
+
+        self::$storeScreenshotsAt = base_path('app/Browser/screenshots');
+        self::$storeConsoleLogAt = base_path('app/Browser/console');
     }
 
     /**
@@ -118,7 +111,7 @@ class Browser
      * @param  string|Page  $url
      * @return $this
      */
-    public function visit($url)
+    function visit($url)
     {
         // First, if the URL is an object it means we are actually dealing with a page
         // and we need to create this page then get the URL from the page object as
@@ -132,8 +125,8 @@ class Browser
         // If the URL does not start with http or https, then we will prepend the base
         // URL onto the URL and navigate to the URL. This will actually navigate to
         // the URL in the browser. Then we will be ready to make assertions, etc.
-        if (! Str::startsWith($url, ['http://', 'https://'])) {
-            $url = static::$baseUrl.'/'.ltrim($url, '/');
+        if (!Str::startsWith($url, ['http://', 'https://'])) {
+            $url = config('app.url') . '/' . ltrim($url, '/');
         }
 
         $this->driver->navigate()->to($url);
@@ -155,7 +148,7 @@ class Browser
      * @param  array  $parameters
      * @return $this
      */
-    public function visitRoute($route, $parameters = [])
+    function visitRoute($route, $parameters = [])
     {
         return $this->visit(route($route, $parameters));
     }
@@ -166,7 +159,7 @@ class Browser
      * @param  mixed  $page
      * @return $this
      */
-    public function on($page)
+    function on($page)
     {
         $this->onWithoutAssert($page);
 
@@ -181,7 +174,7 @@ class Browser
      * @param  mixed  $page
      * @return $this
      */
-    public function onWithoutAssert($page)
+    function onWithoutAssert($page)
     {
         $this->page = $page;
 
@@ -200,7 +193,7 @@ class Browser
      *
      * @return $this
      */
-    public function refresh()
+    function refresh()
     {
         $this->driver->navigate()->refresh();
 
@@ -212,7 +205,7 @@ class Browser
      *
      * @return $this
      */
-    public function back()
+    function back()
     {
         $this->driver->navigate()->back();
 
@@ -224,7 +217,7 @@ class Browser
      *
      * @return $this
      */
-    public function maximize()
+    function maximize()
     {
         $this->driver->manage()->window()->maximize();
 
@@ -238,7 +231,7 @@ class Browser
      * @param  int  $height
      * @return $this
      */
-    public function resize($width, $height)
+    function resize($width, $height)
     {
         $this->driver->manage()->window()->setSize(
             new WebDriverDimension($width, $height)
@@ -252,11 +245,11 @@ class Browser
      *
      * @return $this
      */
-    public function fitContent()
+    function fitContent()
     {
         $body = $this->driver->findElement(WebDriverBy::tagName('body'));
 
-        if (! empty($body)) {
+        if (!empty($body)) {
             $this->resize($body->getSize()->getWidth(), $body->getSize()->getHeight());
         }
 
@@ -270,7 +263,7 @@ class Browser
      * @param  int  $y
      * @return $this
      */
-    public function move($x, $y)
+    function move($x, $y)
     {
         $this->driver->manage()->window()->setPosition(
             new WebDriverPoint($x, $y)
@@ -280,18 +273,28 @@ class Browser
     }
 
     /**
+     * Take a screenshot and return the binary contents.
+     *
+     * @return string
+     */
+    function screenshot()
+    {
+        return $this->driver->takeScreenshot();
+    }
+
+    /**
      * Take a screenshot and store it with the given name.
      *
      * @param  string  $name
      * @return $this
      */
-    public function screenshot($name)
+    function saveScreenshot($name)
     {
         $filePath = sprintf('%s/%s.png', rtrim(static::$storeScreenshotsAt, '/'), $name);
 
         $directoryPath = dirname($filePath);
 
-        if (! is_dir($directoryPath)) {
+        if (!is_dir($directoryPath)) {
             mkdir($directoryPath, 0777, true);
         }
 
@@ -306,15 +309,16 @@ class Browser
      * @param  string  $name
      * @return $this
      */
-    public function storeConsoleLog($name)
+    function storeConsoleLog($name)
     {
         if (in_array($this->driver->getCapabilities()->getBrowserName(), static::$supportsRemoteLogs)) {
             $console = $this->driver->manage()->getLog('browser');
 
-            if (! empty($console)) {
-                file_put_contents(
-                    sprintf('%s/%s.log', rtrim(static::$storeConsoleLogAt, '/'), $name), json_encode($console, JSON_PRETTY_PRINT)
-                );
+            if (!empty($console)) {
+                // echo json_encode($console, JSON_PRETTY_PRINT);
+                // file_put_contents(
+                //     sprintf('%s/%s.log', rtrim(static::$storeConsoleLogAt, '/'), $name), json_encode($console, JSON_PRETTY_PRINT)
+                // );
             }
         }
 
@@ -328,7 +332,7 @@ class Browser
      * @param  \Closure  $callback
      * @return $this
      */
-    public function withinFrame($selector, Closure $callback)
+    function withinFrame($selector, Closure $callback)
     {
         $this->driver->switchTo()->frame($this->resolver->findOrFail($selector));
 
@@ -346,7 +350,7 @@ class Browser
      * @param  \Closure  $callback
      * @return $this
      */
-    public function within($selector, Closure $callback)
+    function within($selector, Closure $callback)
     {
         return $this->with($selector, $callback);
     }
@@ -358,7 +362,7 @@ class Browser
      * @param  \Closure  $callback
      * @return $this
      */
-    public function with($selector, Closure $callback)
+    function with($selector, Closure $callback)
     {
         $browser = new static(
             $this->driver, new ElementResolver($this->driver, $this->resolver->format($selector))
@@ -380,11 +384,11 @@ class Browser
     /**
      * Set the current component state.
      *
-     * @param  \Laravel\Dusk\Component  $component
-     * @param  \Laravel\Dusk\ElementResolver  $parentResolver
+     * @param  \McCaulay\Duskless\Component  $component
+     * @param  \McCaulay\Duskless\ElementResolver  $parentResolver
      * @return void
      */
-    public function onComponent($component, $parentResolver)
+    function onComponent($component, $parentResolver)
     {
         $this->component = $component;
 
@@ -407,10 +411,10 @@ class Browser
      *
      * @return void
      */
-    public function ensurejQueryIsAvailable()
+    function ensurejQueryIsAvailable()
     {
         if ($this->driver->executeScript('return window.jQuery == null')) {
-            $this->driver->executeScript(file_get_contents(__DIR__.'/../bin/jquery.js'));
+            $this->driver->executeScript(file_get_contents(__DIR__ . '/../bin/jquery.js'));
         }
     }
 
@@ -420,7 +424,7 @@ class Browser
      * @param  int  $milliseconds
      * @return $this
      */
-    public function pause($milliseconds)
+    function pause($milliseconds)
     {
         usleep($milliseconds * 1000);
 
@@ -432,7 +436,7 @@ class Browser
      *
      * @return void
      */
-    public function quit()
+    function quit()
     {
         $this->driver->quit();
     }
@@ -443,7 +447,7 @@ class Browser
      * @param  \Closure  $callback
      * @return $this
      */
-    public function tap($callback)
+    function tap($callback)
     {
         $callback($this);
 
@@ -455,7 +459,7 @@ class Browser
      *
      * @return void
      */
-    public function dump()
+    function dump()
     {
         dd($this->driver->getPageSource());
     }
@@ -465,7 +469,7 @@ class Browser
      *
      * @return $this
      */
-    public function tinker()
+    function tinker()
     {
         \Psy\Shell::debug([
             'browser' => $this,
@@ -482,7 +486,7 @@ class Browser
      *
      * @return void
      */
-    public function stop()
+    function stop()
     {
         exit();
     }
@@ -494,7 +498,7 @@ class Browser
      * @param  array  $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

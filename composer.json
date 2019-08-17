@@ -1,7 +1,11 @@
 {
-    "name": "mccaulay/dusk",
-    "description": "Laravel Dusk provides browser automation.",
-    "keywords": ["laravel", "automation", "webdriver"],
+    "name": "mccaulay/duskless",
+    "description": "Laravel Duskless provides browser automation.",
+    "keywords": [
+        "laravel",
+        "automation",
+        "webdriver"
+    ],
     "license": "MIT",
     "require": {
         "php": ">=7.1.0",
@@ -22,13 +26,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Laravel\\Dusk\\": "src/"
+            "Laravel\\Duskless\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Laravel\\Dusk\\DuskServiceProvider"
+                "Laravel\\Duskless\\DusklessServiceProvider"
             ]
         }
     },

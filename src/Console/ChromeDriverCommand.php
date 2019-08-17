@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Dusk\Console;
+namespace McCaulay\Duskless\Console;
 
-use ZipArchive;
 use Illuminate\Console\Command;
-use Laravel\Dusk\OperatingSystem;
+use McCaulay\Duskless\OperatingSystem;
+use ZipArchive;
 
 /**
  * @copyright Originally created by Jonas Staudenmeir: https://github.com/staudenmeir/dusk-updater
@@ -16,7 +16,7 @@ class ChromeDriverCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'dusk:chrome-driver {version?}
+    protected $signature = 'duskless:chrome-driver {version?}
                     {--all : Install a ChromeDriver binary for every OS}
                     {--proxy= : The proxy to download the binary through (example: "tcp://127.0.0.1:9000")}
                     {--ssl-no-verify : Bypass SSL certificate verification when installing through a proxy}';
@@ -100,7 +100,7 @@ class ChromeDriverCommand extends Command
      *
      * @var string
      */
-    protected $directory = __DIR__.'/../../bin/';
+    protected $directory = __DIR__ . '/../../bin/';
 
     /**
      * Execute the console command.
@@ -139,11 +139,11 @@ class ChromeDriverCommand extends Command
     {
         $version = $this->argument('version');
 
-        if (! $version) {
+        if (!$version) {
             return $this->latestVersion();
         }
 
-        if (! ctype_digit($version)) {
+        if (!ctype_digit($version)) {
             return $version;
         }
 
@@ -184,7 +184,7 @@ class ChromeDriverCommand extends Command
         $url = sprintf($this->downloadUrl, $version, $slug);
 
         file_put_contents(
-            $archive = $this->directory.'chromedriver.zip',
+            $archive = $this->directory . 'chromedriver.zip',
             $this->getUrl($url)
         );
 
@@ -223,11 +223,11 @@ class ChromeDriverCommand extends Command
      */
     protected function rename($binary, $os)
     {
-        $newName = str_replace('chromedriver', 'chromedriver-'.$os, $binary);
+        $newName = str_replace('chromedriver', 'chromedriver-' . $os, $binary);
 
-        rename($this->directory.$binary, $this->directory.$newName);
+        rename($this->directory . $binary, $this->directory . $newName);
 
-        chmod($this->directory.$newName, 0755);
+        chmod($this->directory . $newName, 0755);
     }
 
     /**

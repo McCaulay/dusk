@@ -1,9 +1,9 @@
 <?php
 
-namespace Laravel\Dusk\Console;
+namespace McCaulay\Duskless\Console;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 
 class ComponentCommand extends GeneratorCommand
 {
@@ -12,14 +12,14 @@ class ComponentCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'dusk:component {name : The name of the class}';
+    protected $signature = 'duskless:component {name : The name of the class}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new Dusk component class';
+    protected $description = 'Create a new Duskless component class';
 
     /**
      * The type of class being generated.
@@ -35,7 +35,7 @@ class ComponentCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/component.stub';
+        return __DIR__ . '/stubs/component.stub';
     }
 
     /**
@@ -48,7 +48,7 @@ class ComponentCommand extends GeneratorCommand
     {
         $name = Str::replaceFirst($this->rootNamespace(), '', $name);
 
-        return $this->laravel->basePath().'/tests'.str_replace('\\', '/', $name).'.php';
+        return $this->laravel->basePath() . '/app' . str_replace('\\', '/', $name) . '.php';
     }
 
     /**
@@ -59,7 +59,7 @@ class ComponentCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Browser\Components';
+        return $rootNamespace . '\Browser\Components';
     }
 
     /**
@@ -69,6 +69,6 @@ class ComponentCommand extends GeneratorCommand
      */
     protected function rootNamespace()
     {
-        return 'Tests';
+        return 'App';
     }
 }
