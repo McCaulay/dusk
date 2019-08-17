@@ -1,14 +1,8 @@
 {
-    "name": "laravel/dusk",
-    "description": "Laravel Dusk provides simple end-to-end testing and browser automation.",
-    "keywords": ["laravel", "testing", "webdriver"],
+    "name": "mccaulay/dusk",
+    "description": "Laravel Dusk provides browser automation.",
+    "keywords": ["laravel", "automation", "webdriver"],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Taylor Otwell",
-            "email": "taylor@laravel.com"
-        }
-    ],
     "require": {
         "php": ">=7.1.0",
         "ext-json": "*",
@@ -31,15 +25,7 @@
             "Laravel\\Dusk\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Laravel\\Dusk\\Tests\\": "tests/"
-        }
-    },
     "extra": {
-        "branch-alias": {
-            "dev-master": "6.0-dev"
-        },
         "laravel": {
             "providers": [
                 "Laravel\\Dusk\\DuskServiceProvider"
