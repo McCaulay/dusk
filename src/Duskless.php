@@ -80,6 +80,17 @@ class Duskless
     }
 
     /**
+     * Set the user agent.
+     *
+     * @param $useragent The user agent to use.
+     * @return $this
+     */
+    public function userAgent(string $useragent)
+    {
+        return $this->addArgument('--user-agent=' . $useragent);
+    }
+
+    /**
      * Add a browser option.
      *
      * @return $this
