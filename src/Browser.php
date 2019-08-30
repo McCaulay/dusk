@@ -319,7 +319,7 @@ class Browser
             $size = $this->driver->manage()->window()->getSize();
 
             $body = $this->driver->findElement(WebDriverBy::tagName('body'));
-            if (!empty($body) && $body->getSize()->getHeight() > 0) {
+            if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
                 $this->driver->manage()->window()->setSize($body->getSize());
             }
         }
