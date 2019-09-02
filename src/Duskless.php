@@ -68,6 +68,16 @@ class Duskless
     }
 
     /**
+     * Disable the sandbox.
+     *
+     * @return $this
+     */
+    public function noSandbox()
+    {
+        return $this->addArgument('--no-sandbox');
+    }
+
+    /**
      * Set the initial browser window size.
      *
      * @param $width The browser width in pixels.
