@@ -315,19 +315,28 @@ class Browser
     function takeScreenshot(string $filePath = null, bool $full = false)
     {
         if ($full) {
-            // Set size to full
-            $size = $this->driver->manage()->window()->getSize();
 
-            $body = $this->driver->findElement(WebDriverBy::tagName('body'));
-            if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
-                $this->driver->manage()->window()->setSize($body->getSize());
+            try {
+                // Set size to full
+                $size = $this->driver->manage()->window()->getSize();
+
+                $body = $this->driver->findElement(WebDriverBy::tagName('body'));
+                if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
+                    $this->driver->manage()->window()->setSize($body->getSize());
+                }
+            } catch (Exception $e) {
+
             }
         }
         $screenshot = $this->driver->takeScreenshot($filePath);
 
         if ($full) {
             // Restore size
-            $this->driver->manage()->window()->setSize($size);
+            try {
+                $this->driver->manage()->window()->setSize($size);
+            } catch (Exception $e) {
+
+            }
         }
 
         return $screenshot;
