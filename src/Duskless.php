@@ -12,7 +12,20 @@ class Duskless
     use Concerns\ProvidesBrowser,
         SupportsChrome;
 
+    /**
+     * @param \Illuminate\Support\Collection $arguments A list of remote web driver arguments.
+     */
     private $arguments;
+
+    /**
+     * @param int $requestTimeout Set the maximum time of a request to remote Selenium WebDriver server
+     */
+    private $requestTimeout;
+
+    /**
+     * @param int $connectTimeout Set timeout for the connect phase to remote Selenium WebDriver server in ms.
+     */
+    private $connectTimeout;
 
     /**
      * Initialises the dusk browser and starts the chrome driver.
@@ -22,6 +35,8 @@ class Duskless
     public function __construct()
     {
         $this->arguments = collect();
+        $this->setRequestTimeout(30000);
+        $this->setConnectTimeout(30000);
     }
 
     /**
@@ -44,6 +59,28 @@ class Duskless
     {
         $this->closeAll();
         static::stopChromeDriver();
+        return $this;
+    }
+
+    /**
+     * Set the request timeout.
+     *
+     * @return $this
+     */
+    public function setRequestTimeout($timeout)
+    {
+        $this->requestTimeout = $timeout;
+        return $this;
+    }
+
+    /**
+     * Set the connect timeout.
+     *
+     * @return $this
+     */
+    public function setConnectTimeout($timeout)
+    {
+        $this->connectTimeout = $timeout;
         return $this;
     }
 
@@ -126,7 +163,9 @@ class Duskless
         return RemoteWebDriver::create(
             'http://localhost:9515', DesiredCapabilities::chrome()->setCapability(
                 ChromeOptions::CAPABILITY, $options
-            )
+            ),
+            $this->connectTimeout,
+            $this->requestTimeout
         );
     }
 }
