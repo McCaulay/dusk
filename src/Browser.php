@@ -316,27 +316,19 @@ class Browser
     {
         if ($full) {
 
-            try {
-                // Set size to full
-                $size = $this->driver->manage()->window()->getSize();
+            // Set size to full
+            $size = $this->driver->manage()->window()->getSize();
 
-                $body = $this->driver->findElement(WebDriverBy::tagName('body'));
-                if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
-                    $this->driver->manage()->window()->setSize($body->getSize());
-                }
-            } catch (\Facebook\WebDriver\Exception\WebDriverCurlException $e) {
-
+            $body = $this->driver->findElement(WebDriverBy::tagName('body'));
+            if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
+                $this->driver->manage()->window()->setSize($body->getSize());
             }
         }
         $screenshot = $this->driver->takeScreenshot($filePath);
 
         if ($full) {
             // Restore size
-            try {
-                $this->driver->manage()->window()->setSize($size);
-            } catch (\Facebook\WebDriver\Exception\WebDriverCurlException $e) {
-
-            }
+            $this->driver->manage()->window()->setSize($size);
         }
 
         return $screenshot;
