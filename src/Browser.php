@@ -324,7 +324,7 @@ class Browser
                 if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
                     $this->driver->manage()->window()->setSize($body->getSize());
                 }
-            } catch (Exception $e) {
+            } catch (\Facebook\WebDriver\Exception\WebDriverCurlException $e) {
 
             }
         }
@@ -334,7 +334,7 @@ class Browser
             // Restore size
             try {
                 $this->driver->manage()->window()->setSize($size);
-            } catch (Exception $e) {
+            } catch (\Facebook\WebDriver\Exception\WebDriverCurlException $e) {
 
             }
         }
