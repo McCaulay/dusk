@@ -57,9 +57,14 @@ class Duskless
      */
     public function stop()
     {
-        $this->closeAll();
-        static::stopChromeDriver();
-        return $this;
+        try {
+            $this->closeAll();
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            static::stopChromeDriver();
+            return $this;
+        }
     }
 
     /**

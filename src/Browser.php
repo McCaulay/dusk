@@ -513,16 +513,6 @@ class Browser
     }
 
     /**
-     * Stop running tests but leave the browser open.
-     *
-     * @return void
-     */
-    function stop()
-    {
-        exit();
-    }
-
-    /**
      * Dynamically call a method on the browser.
      *
      * @param  string  $method
