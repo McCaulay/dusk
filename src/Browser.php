@@ -319,9 +319,14 @@ class Browser
             // Set size to full
             $size = $this->driver->manage()->window()->getSize();
 
-            $body = $this->driver->findElement(WebDriverBy::tagName('body'));
-            if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
-                $this->driver->manage()->window()->setSize($body->getSize());
+            try {
+                $body = $this->driver->findElement(WebDriverBy::tagName('body'));
+                if (!empty($body) && $body->getSize()->getHeight() > $size->getHeight()) {
+                    $this->driver->manage()->window()->setSize($body->getSize());
+                }
+            } catch (\Facebook\WebDriver\Exception\NoSuchElementException $e) {
+                // If there is no "body" tag, disable $full
+                $full = false;
             }
         }
         $screenshot = $this->driver->takeScreenshot($filePath);
