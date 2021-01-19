@@ -44,7 +44,7 @@ Laravel Duskless provides an expressive, easy-to-use browser automation API. By 
 
 To get started, you should add the `mccaulay/duskless` Composer dependency to your project:
 
-    composer require --dev mccaulay/duskless
+    composer require mccaulay/duskless
 
 > {note} You can register Duskless in production as all of the issues with Laravel Duskless that prevent you from doing so are removed. Such as the loginAs method.
 
